@@ -1,0 +1,7 @@
+*.json
+node_modules/**
+test/**
+*-spec.js
+var/**
+public/**
+doc/**
