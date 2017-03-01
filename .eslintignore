@@ -1,6 +1,6 @@
 *.json
 node_modules/**
-tests/**
+test/**
 *-spec.js
 var/**
 public/**
