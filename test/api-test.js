@@ -10,10 +10,11 @@
  * ------------------------------------------------------
  */
 
-const app = require('../lib/index.js');
-const request = require('supertest');
-const should = require('should');
-const exec = require('child_process').exec;
+const app = require('../lib/index.js'),
+      request = require('supertest'),
+      should = require('should'),
+      exec = require('child_process').exec,
+      join = require('path').join; 
 
 const execPromise = (cmd) => {
   return new Promise((resolve, reject) => {
@@ -26,58 +27,29 @@ const execPromise = (cmd) => {
   });
 }
 
-const npmLogin = (u, pw, e) => {
-  const credentials = {
-    'Username: ': `${u}\n`,
-    'Password: ': `${pw}\n`,
-    'Email: (this IS public) ': `${e}\n`
-  }
-
-  return new Promise((resolve, reject) => {
-    const proc = exec('npm login');
-    proc.stdin.setEncoding('utf-8');
-
-    let stdout = '';
-    proc.stdout.on('data', chunk => {
-      stdout += chunk;
-
-      if (stdout in credentials) {
-        proc.stdin.write(credentials[stdout]);
-        stdout = '';
-      }
-    });
-
-    let stderr = '';
-    proc.stderr.on('data', chunk => {
-      stderr += chunk;
-    });
-
-    proc.on('error', reject);
-
-    proc.on('close', code => {
-      if (code === 0) resolve(stdout);
-      else reject(stderr);
-    });
-  });
-}
-
 require('should-http');
 
 describe('Server starts', () => {
-  // fire up Server
+  let port = 8473;
+  let server = app.listen(port);
 
-  // point registry to port of Server
-  // npm add fake user
+  before(done => {
+    execPromise(`bash ${join(__dirname, '../lib/helpers/set_registry.sh')} http://localhost:${port}/`)
+    .then(() => done())
+    .catch(err => done(err));
+  });
+
+  after(done => {
+    server.close(done);
+  });
+
+  it ('should point npm to the private registry', done => {
+    execPromise(`npm get registry`)
+    .then(stdout => {
+      stdout.trim().should.equal(`http://localhost:${port}/`);
+      done();
+    }).catch(err => done(err));
+  });
 
 
-
-  // tests -- npm whoami
-
-  // tests -- npm adduser
-
-  // tests -- npm publish
-
-  // tests -- npm install
-
-  // etc -- see lib/index for all routes to check
 });
