@@ -13,11 +13,34 @@ Everything.
 ```js
 
 // custom config, otherwise inits tapestry with barebone defaults
-
 const config = module.exports = {};
 
-config.auth = someAuthenticationScheme
-config.storage = someStorageScheme
+config.auth = (username, password, email) => {
+  // maybe you want to authenticate against some internal endpoint
+  request(someUrl, {auth: {username: username, password: password}})
+  .then(() => username);
+  .catch(() => false);
+}
+
+config.storage = {
+  // where STORE is some naive DB
+  has: (pkg) => STORE.includes(pkg),
+  add: (pkg) => STORE.push(pkg),
+  remove: (pkg) => STORE.delete(pkg)
+}
+
+config.packages = {
+  public: {
+    pattern: '*',
+    access: ['names', 'of', 'users'],
+    publish: ['names', 'of', 'users']
+  },
+  private: {
+    pattern: 'local-*',
+    access: ['names', 'of', 'users'],
+    publish: ['names', 'of', 'users']
+  }
+}
 
 // ...
 
