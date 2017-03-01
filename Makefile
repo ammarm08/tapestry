@@ -1,5 +1,5 @@
 #=============================================================================
-# Makefile for testing MCI-REGISTRY
+# Makefile for testing TAPESTRY
 #
 #=============================================================================
 
@@ -39,7 +39,7 @@ test: lint test_server
 
 
 # Test the Express server and APIs
-MOCHAOPTS := --reporter mochawesome --reporter-options reportDir='./test/reports',reportFilename='index',reportTitle='MCI Registry Test Results',inlineAssets=false,enableCode=true,enableCharts=false
+MOCHAOPTS := --reporter mochawesome --reporter-options reportDir='./test/reports',reportFilename='index',reportTitle='Tapestry Test Results',inlineAssets=false,enableCode=true,enableCharts=false
 
 test_server:
 	NODE_ENV=test node $(MOCHA) ./test/api-test.js $(MOCHAOPTS)

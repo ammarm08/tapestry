@@ -8,8 +8,8 @@ const port = process.env.PORT || 4873;
 
 app.listen(port, () => {
   if (process.env.DEV) {
-    console.info('[ MCI-REGISTRY ] HTTP server listening on port ' + port);
-    console.info(`[ MCI-REGISTRY ] Server running with node version: ${process.version} `);
+    console.info('[ TAPESTRY ] HTTP server listening on port ' + port);
+    console.info(`[ TAPESTRY ] Server running with node version: ${process.version} `);
   }
 
   process.emit('ready');
