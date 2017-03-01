@@ -13,6 +13,7 @@
 const app = require('../lib/index.js'),
       request = require('supertest'),
       should = require('should'),
+      npmClient = require('npm-registry-client'),
       exec = require('child_process').exec,
       join = require('path').join; 
 
@@ -32,24 +33,43 @@ require('should-http');
 describe('Server starts', () => {
   let port = 8473;
   let server = app.listen(port);
+  let registryUrl = `http://localhost:${port}/`;
+
+  const npm = new npmClient();
+  const user = {
+    username: 'testuser',
+    password: 'testpass',
+    email: 'test@email.com'
+  }
 
   before(done => {
-    execPromise(`bash ${join(__dirname, '../lib/helpers/set_registry.sh')} http://localhost:${port}/`)
+    execPromise(`npm set registry ${registryUrl}`)
     .then(() => done())
     .catch(err => done(err));
   });
 
   after(done => {
-    server.close(done);
+    execPromise(`npm logout`)
+    .then(stdout => server.close(done))
+    .catch(err => server.close(done));
   });
 
   it ('should point npm to the private registry', done => {
     execPromise(`npm get registry`)
     .then(stdout => {
-      stdout.trim().should.equal(`http://localhost:${port}/`);
+      stdout.trim().should.equal(registryUrl);
       done();
     }).catch(err => done(err));
   });
 
+  it('should add and log in user to private registry', done => {
+    npm.adduser(registryUrl, {auth: user}, (err, data, raw, res) => {
+      if (err) {
+        done(err);
+      } else {
+        done();
+      }
+    });
+  });
 
 });
