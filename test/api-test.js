@@ -15,7 +15,7 @@ const app = require('../lib/index.js'),
       should = require('should'),
       npmClient = require('npm-registry-client'),
       exec = require('child_process').exec,
-      join = require('path').join; 
+      join = require('path').join;
 
 const execPromise = (cmd) => {
   return new Promise((resolve, reject) => {
@@ -61,6 +61,7 @@ describe('Server starts', () => {
     }).catch(err => done(err));
   });
 
+  // TODO: npm adduser -- test wonky inputs, already logged-in user, etc
   it('"npm adduser": should add and log in user to private registry', done => {
     npm.adduser(registryUrl, {auth: user}, (err, data, raw, res) => {
       if (err) {
@@ -71,6 +72,7 @@ describe('Server starts', () => {
     });
   });
 
+  // TODO: npm whoami -- test unlogged-in user
   it('"npm whoami": should return the name of the logged in user from the private registry', done => {
     npm.whoami(registryUrl, {auth: user}, (err, res) => {
       if (err) {
@@ -93,9 +95,12 @@ describe('Server starts', () => {
     });
   });
 
-  // TBD: npm adduser (do wonky inputs get handled by npm before they get sent to the registry?)
-  // TBD: npm login (is this a different endpoint than adduser?)
-  // TBD: npm logout (delete user if found, otherwise send error?)
-  // TBD: npm whoami (if logged in, give username. else give error?)
+  // TODO: npm logout -- test logged in user + unlogged-in user
+
+  // TODO: npm publish -- folder/tarball
+
+  // TODO: npm unpublish -- folder/tarball
+
+  // TODO: npm install -- folder/tarball
 
 });
