@@ -49,9 +49,8 @@ describe('Server starts', () => {
   });
 
   after(done => {
-    execPromise(`npm logout`)
-    .then(stdout => server.close(done))
-    .catch(err => server.close(done));
+    server.close();
+    done();
   });
 
   it ('should point npm to the private registry', done => {
@@ -62,7 +61,7 @@ describe('Server starts', () => {
     }).catch(err => done(err));
   });
 
-  it('should add and log in user to private registry', done => {
+  it('"npm adduser": should add and log in user to private registry', done => {
     npm.adduser(registryUrl, {auth: user}, (err, data, raw, res) => {
       if (err) {
         done(err);
@@ -71,5 +70,32 @@ describe('Server starts', () => {
       }
     });
   });
+
+  it('"npm whoami": should return the name of the logged in user from the private registry', done => {
+    npm.whoami(registryUrl, {auth: user}, (err, res) => {
+      if (err) {
+        done(err);
+      } else {
+        res.should.equal(user.username);
+        done();
+      }
+    });
+  });
+
+  it('"npm whoami": should not return an unauthorized user', done => {
+    npm.whoami(registryUrl, {auth: {}}, (err, res) => {
+      if (err) {
+        done(err);
+      } else {
+        should.not.exist(res);
+        done();
+      }
+    });
+  });
+
+  // TBD: npm adduser (do wonky inputs get handled by npm before they get sent to the registry?)
+  // TBD: npm login (is this a different endpoint than adduser?)
+  // TBD: npm logout (delete user if found, otherwise send error?)
+  // TBD: npm whoami (if logged in, give username. else give error?)
 
 });
