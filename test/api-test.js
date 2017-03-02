@@ -87,7 +87,7 @@ describe('Server starts', () => {
   it('"npm whoami": should not return an unauthorized user', done => {
     npm.whoami(registryUrl, {auth: {}}, (err, res) => {
       if (err) {
-        done(err);
+        done();
       } else {
         should.not.exist(res);
         done();
@@ -98,6 +98,7 @@ describe('Server starts', () => {
   // TODO: npm logout -- test logged in user + unlogged-in user
 
   // TODO: npm publish -- folder/tarball
+
 
   // TODO: npm unpublish -- folder/tarball
 
