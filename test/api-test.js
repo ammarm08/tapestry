@@ -43,14 +43,19 @@ describe('Server starts', () => {
   }
 
   before(done => {
-    execPromise(`npm set registry ${registryUrl}`)
-    .then(() => done())
+    execPromise(`mkdir ./storage`).then(() => {
+      return execPromise(`npm set registry ${registryUrl}`);
+    }).then(() => done())
     .catch(err => done(err));
   });
 
   after(done => {
-    server.close();
-    done();
+    execPromise(`rm -rf ./storage`).then(() => {
+      return execPromise(`mkdir ./storage`);
+    }).then(() => {
+      server.close();
+      done();
+    });
   });
 
   it ('should point npm to the private registry', done => {
@@ -98,7 +103,6 @@ describe('Server starts', () => {
   // TODO: npm logout -- test logged in user + unlogged-in user
 
   // TODO: npm publish -- folder/tarball
-
 
   // TODO: npm unpublish -- folder/tarball
 
