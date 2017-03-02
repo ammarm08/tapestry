@@ -31,7 +31,7 @@ const execPromise = (cmd) => {
 require('should-http');
 
 describe('Server starts', () => {
-  let port = 8473;
+  let port = 4873;
   let server = app.listen(port);
   let registryUrl = `http://localhost:${port}/`;
 
@@ -43,7 +43,7 @@ describe('Server starts', () => {
   }
 
   before(done => {
-    execPromise(`mkdir ./storage`).then(() => {
+    execPromise(`if [ ! -d ./storage ]; then mkdir ./storage; fi`).then(() => {
       return execPromise(`npm set registry ${registryUrl}`);
     }).then(() => done())
     .catch(err => done(err));
