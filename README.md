@@ -2,48 +2,63 @@
 
 A private NPM registry scaffold because Sinopia is awesome but buggy/unmaintained.
 
-Configuration? 100%! You're the developer!
+Default configuration:
+- user "database" is a JSON file with user:hashed_pwd key-value pairs
+- package "storage" in filesystem (versioned tarballs)
+- can only publish to private registry, not to any upstream repositories
+- only packages prefixed with "local-" get written to private registry
+- any user who has successfully logged in can install and publish packages
+
+To customize, you can define your own configuration as long as it has the following interface.
+
+```js
+config.user
+  .verify (token) => { /* ... returns a Promise resolving with the username */ },
+  .add (unsafeToken='username:pwd', email) => { /* ... returns a Promise resolving with encrypted token for further use */ },
+
+config.storage
+  .has (tarball_name, package_name) => { /* ... returns a Promise that resolves on find, rejects on no find */ },
+  .write (tarball, tarball_name, package_name) => { /* ... persist tarball stream somewhere, resolve Promise on write, reject on no write */ },
+  .delete (tarball_name, package_name) => {/* ... returns a Promise that resolves on delete, rejects on no delete */}
+
+config.publish
+   .local_prefix: 'local-' // [STRING] -> all packages in private registry (whether to install or publish) require this prefix,
+   .users: [] // [ARRAY] -> list of usernames to allow publish access. empty Array means all logged-in users have publish access
+
+config.install
+   .uplinks: [{}, {}] // [ARRAY] -> { url: 'https://registry.npmjs.org', users: ['users', 'with', 'install', 'access'] }
+```
 
 ## TO-DO:
 
-Everything.
+Currenty working: user login, whoami, and package publishing.
+Next: package installing and unpublishing.
+Next still: all the nuanced npm use cases.
 
 ## IDEAL USAGE:
 
 ```js
+// using default config
+const tapestry = require('tapestry')();
+tapestry.listen(process.env.PORT)
+```
 
-// custom config, otherwise inits tapestry with barebone defaults
-const config = module.exports = {};
+```bash
+npm set registry <registry_endpoint>
 
-config.auth = (username, password, email) => {
-  // maybe you want to authenticate against some internal endpoint
-  request(someUrl, {auth: {username: username, password: password}})
-  .then(() => username);
-  .catch(() => false);
-}
+# or npm adduser
+npm login
 
-config.storage = {
-  // where STORE is some naive DB
-  has: (pkg) => STORE.includes(pkg),
-  add: (pkg) => STORE.push(pkg),
-  remove: (pkg) => STORE.delete(pkg)
-}
+# Username: 
+# Password:
+# Email ( ... ) :
 
-config.packages = {
-  public: {
-    pattern: '*',
-    access: ['names', 'of', 'users'],
-    publish: ['names', 'of', 'users']
-  },
-  private: {
-    pattern: 'local-*',
-    access: ['names', 'of', 'users'],
-    publish: ['names', 'of', 'users']
-  }
-}
+# publishes package if that version doesn't already exist in private registry
+npm publish
 
-// ...
+# installs local package if found
+npm install --save local-tool
 
-
-const tapestry = require('tapestry')(config);
+# installs upstream package
+npm install --save express
 ```
