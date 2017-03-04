@@ -1,15 +1,12 @@
 # Tapestry
 
-A private NPM registry scaffold because Sinopia is awesome but buggy/unmaintained.
+A private NPM registry scaffold because Sinopia is awesome but unmaintained.
 
-Default configuration:
-- user "database" is a JSON file with user:hashed_pwd key-value pairs
-- package "storage" in filesystem (versioned tarballs)
-- can only publish to private registry, not to any upstream repositories
-- only packages prefixed with "local-" get written to private registry
-- any user who has successfully logged in can install and publish packages
+By default, Tapestry stores user auth info (hashed passwords) & packages (versioned tarballs) in filesystem, publishes only to the private registry (and not anything else upstream), and installs from npmjs.org if package not found locally.
 
-To customize, you can define your own configuration as long as it has the following interface.
+But the more useful part is that Tapestry is highly configurable: write packages to your S3 bucket: use your own auth server to authenticate users; list multiple upstream registries to install from; only allow the publishing of packages of a specific prefix; set publish and install privileging, etc.
+
+Custom configuration MUST be defined with the following interface:
 
 ```js
 config.user
@@ -33,9 +30,9 @@ config.install
 
 Currenty working: user login, whoami, and package publishing.
 
-Next: package installing and unpublishing.
+Pending: package installing and unpublishing.
 
-Next still: all the nuanced npm use cases.
+Next still: all the nuanced npm use cases. edge cases. ouch.
 
 
 ## IDEAL USAGE:
