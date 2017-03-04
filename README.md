@@ -14,7 +14,7 @@ To customize, you can define your own configuration as long as it has the follow
 ```js
 config.user
   .verify (token) => { /* ... returns a Promise resolving with the username */ },
-  .add (unsafeToken='username:pwd', email) => { /* ... returns a Promise resolving with encrypted token for further use */ },
+  .add (username, password, email) => { /* ... returns a Promise resolving with an encrypted token for auth purposes */ },
 
 config.storage
   .has (tarball_name, package_name) => { /* ... returns a Promise that resolves on find, rejects on no find */ },
@@ -32,18 +32,26 @@ config.install
 ## TO-DO:
 
 Currenty working: user login, whoami, and package publishing.
+
 Next: package installing and unpublishing.
+
 Next still: all the nuanced npm use cases.
+
 
 ## IDEAL USAGE:
 
 ```js
-// using default config
+
+// launch registry using default configuration
+
 const tapestry = require('tapestry')();
 tapestry.listen(process.env.PORT)
+
 ```
 
 ```bash
+
+# points npm client to your registry
 npm set registry <registry_endpoint>
 
 # or npm adduser
@@ -61,4 +69,5 @@ npm install --save local-tool
 
 # installs upstream package
 npm install --save express
+
 ```
