@@ -9,21 +9,25 @@ But the more useful part is that Tapestry is highly configurable: write packages
 Custom configuration MUST be defined with the following interface:
 
 ```js
-config.user
-  .verify (token) => { /* ... returns a Promise resolving with the username */ },
-  .add (username, password, email) => { /* ... returns a Promise resolving with an encrypted token for auth purposes */ },
+config.user = {
+  verify: (token) => Promise((resolve, reject) => ...) // verify if token matches valid user. resolve w/ user name
+  add: (u, pw, email) => Promise((resolve, reject) => ...) // if necessary, add new user. resolve w/ user token
+}
 
-config.storage
-  .has (tarball_name, package_name) => { /* ... returns a Promise that resolves on find, rejects on no find */ },
-  .write (tarball, tarball_name, package_name) => { /* ... persist tarball stream somewhere, resolve Promise on write, reject on no write */ },
-  .delete (tarball_name, package_name) => {/* ... returns a Promise that resolves on delete, rejects on no delete */}
+config.install = {
+  uplinks: [ { url: 'https://registrynpmjs.org', users: [] }, ... ] // if users list empty, install privs for all logged-in users
+}
 
-config.publish
-   .local_prefix: 'local-' // [STRING] -> all packages in private registry (whether to install or publish) require this prefix,
-   .users: [] // [ARRAY] -> list of usernames to allow publish access. empty Array means all logged-in users have publish access
+config.publish = {
+  local_prefix: 'local-' // no package whose name isn't prefixed with 'local-' will be published
+  users: [] // if users list empty, publish privs for all logged-in users
+}
 
-config.install
-   .uplinks: [{}, {}] // [ARRAY] -> { url: 'https://registry.npmjs.org', users: ['users', 'with', 'install', 'access'] }
+config.storage = {
+  has: (tarball_name, package_name) => Promise((resolve, reject) => ...) // check if pkg exists. resolve with true/false
+  write: (tarball, tarball_name, package_name) => Promise((resolve, reject) => ... ) // write pkg if possible
+  delete: (tarball_name, package_name) => Promise((resolve, reject) => ... ) // delete pkg if possible
+}
 ```
 
 ## TO-DO:
