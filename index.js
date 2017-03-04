@@ -1,6 +1,6 @@
 'use strict';
 
-const app = require('./lib')(require('./lib/defaults'));
+const app = require('./lib')(require('./lib/defaults/config.js'));
 const port = process.env.PORT || 4873;
 
 

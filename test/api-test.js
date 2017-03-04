@@ -10,7 +10,7 @@
  * ------------------------------------------------------
  */
 
-const app = require('../lib/index.js'),
+const app = require('../lib/index.js')(require('../lib/defaults/config.js')),
       request = require('supertest'),
       should = require('should'),
       npmClient = require('npm-registry-client'),
@@ -92,6 +92,7 @@ describe('Server starts', () => {
   it('"npm whoami": should not return an unauthorized user', done => {
     npm.whoami(registryUrl, {auth: {}}, (err, res) => {
       if (err) {
+        should.exist(err);
         done();
       } else {
         should.not.exist(res);
