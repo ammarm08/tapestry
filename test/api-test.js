@@ -10,7 +10,7 @@
  * ------------------------------------------------------
  */
 
-const app = require('../lib/index.js')(require('../lib/defaults/config.js')),
+const app = require('../lib/index.js')(),
       request = require('supertest'),
       should = require('should'),
       npmClient = require('npm-registry-client'),
